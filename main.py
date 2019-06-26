@@ -2,6 +2,7 @@ from empregado import Empregado
 from venda import Venda
 from cartãoponto import CartãoPonto
 from taxaserviço import TaxaDeServiço
+from menus import menu_principal, menu_empregado, menu_vendas, menu_cartão_ponto, menu_taxas_serviço
 from datetime import date, timedelta, datetime
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -14,20 +15,6 @@ meses = {1 : 'Janeiro', 2 : 'Fevereiro', 3 : 'Março',
         10 : 'Outubro', 11 : 'Novembro', 12 : 'Dezembro'}
 
 
-def menu_principal():
-    print("""\n-=-=- MENU PRINCIPAL -=-=-
-1 - Funcionários
-2 - Rodar Folha de Pagamentos
-3 - Lançar Cartão de Ponto
-4 - Lançar Venda
-5 - Lançar Taxa de Serviço
-6 - Listar Agendas de Pagamentos
-7 - Undo
-8 - Redo
-9 - Sair
->> """, end='')
-
-
 def checar_ano_bissexto(data):
     return True if data.year % 4 == 0 and data.year % 100 != 0 or data.year % 400 == 0 else False
 
@@ -36,27 +23,17 @@ def checar_ano_bissexto(data):
 """                            EMPREGADOS                            """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def menu_empregado():
-    print("""\n-=-=- FUNCIONÁRIOS -=-=-
-1 - Adicionar funcionário
-2 - Remover funcionário
-3 - Editar funcionário
-4 - Mostrar empregados
-5 - Retornar
->> """, end='')
-
-
 def localizar_empregado():
     while True:
         id_func = str(input('Insira o ID do funcionário: '))
         if id_func.isnumeric(): break
         else: print('\nID inválido!')
     id_func = int(id_func)
-    for func in Empregado.empregados:
-        if func.id_empregado == id_func:
+    for empregado in Empregado.empregados:
+        if id_func == empregado.id_empregado:
             print('\nFuncionário localizado!')
-            return func
-        else: return False
+            return empregado
+    return False
 
 
 def mostrar_empregados():
@@ -71,10 +48,12 @@ def mostrar_empregados():
             if empregado.ativo:
                 print(f'\nNome: {empregado.nome}')
                 print(f'ID: {empregado.id_empregado}')
+                print(f'Endereço: {empregado.endereço}')
                 print('Pertence a sindicato? ', end='')
                 print(f'Sim' if empregado.sindicato else 'Não')
                 if empregado.sindicato:
                     print(f'ID Sindicato: {empregado.id_sindicato}')
+                print(f'Salário: R${empregado.salario:.2f}')
                 print(f'Prazo de pagamento: {Empregado.prazo_pagamento[empregado.p_pagamento]}')
                 print(f'Forma de pagamento: {Empregado.forma_pagamento[empregado.f_pagamento]}')
                 print(f'Próximo pagamento: {empregado.proximo_pagamento}')
@@ -115,14 +94,13 @@ def adicionar_empregado():
         else: print('\nOpção inválida!')
     tipo = int(tipo)
     novo_empregado.t_empregado = tipo - 1
-    if tipo == 1 or tipo == 2:
-        while True:
-            novo_empregado.salario = str(input('Salário: R$'))
-            if novo_empregado.salario.isnumeric() and float(novo_empregado.salario) > 0.0:
-                novo_empregado.salario = float(novo_empregado.salario)
-                break
-            else: print('\nSalário inválido!')
-    elif tipo == 3:
+    while True:
+        novo_empregado.salario = str(input('Salário: R$'))
+        if novo_empregado.salario.isnumeric() and float(novo_empregado.salario) > 0.0:
+            novo_empregado.salario = float(novo_empregado.salario)
+            break
+        else: print('\nSalário inválido!')
+    if tipo == 3:
         while True:
             novo_empregado.comissao = str(input('Comissão (sem o sinal de %): '))
             if novo_empregado.comissao.isnumeric() and 0.0 < float(novo_empregado.comissao) <= 100.0:
@@ -266,13 +244,12 @@ def editar_empregado():
                 else: print('\nTipo inválido!')
             tipo = int(tipo)
             aux_func.tipo = tipo - 1
-            if tipo == 1 or tipo == 2:
-                while True:
-                    aux_func.salario = str(input('Salário: R$'))
-                    if aux_func.salario.isnumeric():
-                        aux_func.salario = float(aux_func.salario)
-                        break
-                    else: print('\nSalário inválido!')
+            while True:
+                aux_func.salario = str(input('Salário: R$'))
+                if aux_func.salario.isnumeric():
+                    aux_func.salario = float(aux_func.salario)
+                    break
+                else: print('\nSalário inválido!')
             if tipo == 3:
                 while True:
                     aux_func.comissao = str(input('Comissão (sem o sinal de %): '))
@@ -368,15 +345,6 @@ def func_empregado():
 """                           CARTÃO PONTO                           """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def menu_cartão_ponto():
-    print("""\n-=-=- CARTÃO PONTO -=-=-
-1 - Entrada
-2 - Saída
-3 - Exibir pontos
-4 - Retornar
->> """, end='')
-
-
 def mostrar_pontos():
     print('\n-=-=- CARTÕES PONTO -=-=-')
     if CartãoPonto.pontos:
@@ -457,14 +425,6 @@ def lançar_cartão_ponto(opc):
 """                              VENDAS                              """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def menu_vendas():
-    print("""\n-=-=- VENDAS -=-=-
-1 - Registrar venda
-2 - Mostrar vendas efetuadas
-3 - Retornar
->> """, end='')
-
-
 def func_vendas():
     while True:
         menu_vendas()
@@ -531,7 +491,7 @@ def atualizar_data(emp, data_hoje):
     elif prazo == 2:
         delta = timedelta(days = 15)
     data_hoje += delta
-    aux_func.proximo_pagamento = data_hoje.strftime('%d/%m/%Y')
+    return data_hoje.strftime('%d/%m/%Y')
 
 
 def calcular_salario(emp):
@@ -546,6 +506,9 @@ def calcular_salario(emp):
         for venda in Venda.vendas:
             if venda.id_empregado == emp.id_empregado and venda.data > emp.ultimo_pagamento:
                 salario += ((emp.comissao) / 100) * venda.valor
+    for taxa in TaxaDeServiço.taxas:
+        if taxa.id_empregado == emp.id_empregado and taxa.mes == date.today().month:
+            salario -= taxa.valor
     return salario
 
 
@@ -566,14 +529,6 @@ def rodar_folha():
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                         TAXAS DE SERVIÇO                         """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-def menu_taxas_serviço():
-    print("""\n -=-=- TAXAS DE SERVIÇO -=-=-
-1 - Lançar Taxa de Serviço
-2 - Exibir Taxas
-3 - Retornar
->> """, end='')
-
 
 def func_taxas_serviço():
     while True:
@@ -648,6 +603,7 @@ def redo():
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                        PROGRAMA PRINCIPAL                        """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 while True:
     menu_principal()
     while True:
