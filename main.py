@@ -203,6 +203,7 @@ def remover_empregado():
             for taxa in TaxaDeServiço.taxas:
                 if taxa.id_empregado == aux_func.id_empregado: taxa.ativo = False
             break
+        elif confirmação == 'n': return 
 
 
 def editar_empregado():
