@@ -416,6 +416,7 @@ def lançar_cartão_ponto(opc):
         ponto = CartãoPonto()
 
         aux_func = localizar_empregado()
+        if not aux_func: print('\nNão há empregados com esse ID!'); return
         print(f'\nNome: {aux_func.nome}\n')
         
         hora = datetime.now()
@@ -432,6 +433,7 @@ def lançar_cartão_ponto(opc):
 
     elif opc == 0:
         aux_func = localizar_empregado()
+        if not aux_func: print('\nNão há empregados com esse ID!'); return
         print(f'\nNome: {aux_func.nome}\n')
 
         data = date.today().strftime('%d/%m/%Y')
@@ -493,6 +495,7 @@ def lançar_venda():
     data_venda = date.today()
     print('Empregado responsável pela venda:')
     aux_func = localizar_empregado()
+    if not aux_func: print('\nNão há empregados com esse ID!'); return
     venda.valor = float(valor)
     venda.ativo = True
     venda.data = data_venda.strftime('%d/%m/%Y')
@@ -585,6 +588,7 @@ def lançar_taxa_serviço():
     taxa.valor = float(input('Valor da taxa: R$'))
     print('Funcionário associado à taxa:')
     aux_func = localizar_empregado()
+    if not aux_func: print('\nNão há empregados com esse ID!'); return
     print(f'\nNome: {aux_func.nome}')
     taxa.id_empregado = aux_func.id_empregado
     taxa.mes = date.today().month
