@@ -142,6 +142,17 @@ def adicionar_empregado():
         else: print('\nForma de pagamento inválida!')
     forma_pagamento = int(forma_pagamento)
     novo_empregado.f_pagamento = forma_pagamento - 1
+    while True:
+        dia_preferido = str(input("""Dia preferido para pagamento
+2 - Segunda
+3 - Terça
+4 - Quarta
+5 - Quinta
+6 - Sexta
+>> """))
+        if dia_preferido.isnumeric() and 1 < int(dia_preferido) < 7: break
+        else: print('\nDia inválido!')
+    novo_empregado.dia_preferido = int(dia_preferido)
     data_hoje = date.today()
     if prazo_pagamento == 1:
         delta = timedelta(days = 7)
@@ -206,7 +217,7 @@ def editar_empregado():
 2 - Endereço
 3 - Tipo de empregado
 4 - Sindicato
-5 - Tipo de pagamento
+5 - Prazo de pagamento
 6 - Forma de pagamento
 7 - Retornar
 >> """))
@@ -285,6 +296,17 @@ def editar_empregado():
                 else: print('\nPrazo inválido!')
             prazo_pagamento = int(prazo_pagamento)
             aux_func.p_pagamento = prazo_pagamento - 1
+            while True:
+                dia_preferido = str(input("""Dia preferido para pagamento
+2 - Segunda
+3 - Terça
+4 - Quarta
+5 - Quinta
+6 - Sexta
+>> """))
+                if dia_preferido.isnumeric() and 1 < int(dia_preferido) < 7: break
+                else: print('\nDia inválido!')
+            aux_func.dia_preferido = int(dia_preferido)
             data_hoje = date.today()
             if prazo_pagamento == 1:
                 delta = timedelta(days = 7)
