@@ -429,6 +429,11 @@ def lançar_cartão_ponto(opc):
         ponto.data = data_ponto
         ponto.id_empregado = aux_func.id_empregado
 
+        for ponto in CartãoPonto.pontos:
+            if aux_func.id_empregado == ponto.id_empregado and data_ponto == ponto.data:
+                print('Empregado já bateu ponto hoje!')
+                return
+
         CartãoPonto.pontos.append(ponto)
         print('Ponto de entrada OK!\n')
 
