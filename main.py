@@ -61,7 +61,12 @@ def localizar_empregado():
 
 def mostrar_empregados():
     print('\n-=-=- EMPREGADOS -=-=-', end='')
-    if Empregado.empregados:
+    continuar = False
+    for empregado in Empregado.empregados:
+        if empregado.ativo == True:
+            continuar = True
+            break
+    if continuar:
         for empregado in Empregado.empregados:
             if empregado.ativo:
                 print(f'\nNome: {empregado.nome}')
@@ -74,7 +79,7 @@ def mostrar_empregados():
                 print(f'Forma de pagamento: {Empregado.forma_pagamento[empregado.f_pagamento]}')
                 print(f'Próximo pagamento: {empregado.proximo_pagamento}')
     else:
-        print('\nNão há funcionário cadastrados!')
+        print('\nNão há funcionários cadastrados!')
 
 
 def adicionar_empregado():
