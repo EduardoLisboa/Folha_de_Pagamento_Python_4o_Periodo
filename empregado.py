@@ -16,6 +16,7 @@ class Empregado():
         self.comissao = float
         # 0 - Cheque correios, 1 = Cheque mãos, 2 = Depósito bancário
         self.f_pagamento = int
+        self.dia_preferido = int
         self.ativo = bool
 
         self.sindicato = bool
