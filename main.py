@@ -8,12 +8,6 @@ from datetime import date, timedelta, datetime
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                          FUNÇÕES GERAIS                          """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-# Dicionário para a função 'mostrar_taxas_serviço()'
-meses = {1 : 'Janeiro', 2 : 'Fevereiro', 3 : 'Março',
-        4 : 'Abril', 5 : 'Maio', 6 : 'Junho',
-        7 : 'Julho', 8 : 'Agosto', 9 : 'Setembro',
-        10 : 'Outubro', 11 : 'Novembro', 12 : 'Dezembro'}
-
 
 def checar_ano_bissexto(data):
     return True if data.year % 4 == 0 and data.year % 100 != 0 or data.year % 400 == 0 else False
