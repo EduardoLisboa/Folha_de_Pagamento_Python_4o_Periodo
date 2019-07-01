@@ -1,8 +1,8 @@
-from empregado import Empregado, Horario, Assalariado, Comissionado
+from empregado import *
 from venda import Venda
 from cartãoponto import CartãoPonto
 from taxaserviço import TaxaDeServiço
-from menus import menu_principal, menu_empregado, menu_vendas, menu_cartão_ponto, menu_taxas_serviço
+from menus import *
 from datetime import date, timedelta, datetime
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
