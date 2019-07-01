@@ -1,4 +1,4 @@
-from empregado import Empregado
+from empregado import Empregado, Horario, Assalariado, Comissionado
 from venda import Venda
 from cartãoponto import CartãoPonto
 from taxaserviço import TaxaDeServiço
@@ -36,92 +36,49 @@ def localizar_empregado():
     return False
 
 
-def mostrar_empregados():
-    print('\n-=-=- EMPREGADOS -=-=-', end='')
-    continuar = False
-    for empregado in Empregado.empregados:
-        if empregado.ativo == True:
-            continuar = True
-            break
-    if continuar:
-        for empregado in Empregado.empregados:
-            if empregado.ativo:
-                print(f'\nNome: {empregado.nome}')
-                print(f'ID: {empregado.id_empregado}')
-                print(f'Endereço: {empregado.endereço}')
-                print('Pertence a sindicato? ', end='')
-                print(f'Sim' if empregado.sindicato else 'Não')
-                if empregado.sindicato:
-                    print(f'ID Sindicato: {empregado.id_sindicato}')
-                print(f'Salário: R${empregado.salario:.2f}')
-                print(f'Prazo de pagamento: {Empregado.prazo_pagamento[empregado.p_pagamento]}')
-                print(f'Forma de pagamento: {Empregado.forma_pagamento[empregado.f_pagamento]}')
-                print(f'Próximo pagamento: {empregado.proximo_pagamento}')
-    else:
-        print('\nNão há funcionários cadastrados!')
-
-
 def adicionar_empregado():
     print('\n-=-=- ADICIONAR -=-=-')
-    novo_empregado = Empregado()
-    novo_empregado.ativo = True
-    novo_empregado.id_empregado = Empregado.id_empregado + 1
+    ativo = True
+    id_empregado = Empregado.id_empregado + 1
+    Empregado.id_empregado += 1
+
     while True:
         ruim = False
-        novo_empregado.nome = str(input('Nome: ')).strip().title()
-        for nome in novo_empregado.nome.split():
-            if not nome.isalpha():
+        nome = str(input('Nome: ')).strip().title()
+        for palavra in nome.split():
+            if not palavra.isalpha():
                 ruim = True
                 break
         if not ruim: break
         else: print('\nNome inválido!')
+
     while True:
         ruim = False
-        novo_empregado.endereço = str(input('Endereço: ')).strip().title()
-        for palavra in novo_empregado.endereço.split():
+        endereço = str(input('Endereço: ')).strip().title()
+        for palavra in endereço.split():
             if not palavra.isalnum():
                 ruim = True
                 break
         if not ruim: break
         else: print('\nEndereço inválido!')
-    while True:
-        tipo = str(input("""Tipo de empregado
-1 - Horário
-2 - Assalariado
-3 - Comissionado
->> """))
-        if tipo.isnumeric() and 0 < int(tipo) < 4: break
-        else: print('\nOpção inválida!')
-    tipo = int(tipo)
-    novo_empregado.t_empregado = tipo - 1
-    while True:
-        novo_empregado.salario = str(input('Salário: R$'))
-        if novo_empregado.salario.isnumeric() and float(novo_empregado.salario) > 0.0:
-            novo_empregado.salario = float(novo_empregado.salario)
-            break
-        else: print('\nSalário inválido!')
-    if tipo == 3:
-        while True:
-            novo_empregado.comissao = str(input('Comissão (sem o sinal de %): '))
-            if novo_empregado.comissao.isnumeric() and 0.0 < float(novo_empregado.comissao) <= 100.0:
-                novo_empregado.comissao = float(novo_empregado.comissao)
-                break
-            else: print('\nComissão inválida!')
     
     while True:
         sindicato = str(input('Pertence a sindicato? (s/n) ')).lower().strip()[0]
         if sindicato.isalpha() and sindicato in 'ns': break
         else: print('\nResposta inválida!')
     if sindicato == 's':
-        novo_empregado.sindicato = True
+        sindicato = True
         while True:
-            novo_empregado.taxa = str(input('Taxa do sindicato: R$'))
-            if novo_empregado.taxa.isnumeric() and float(novo_empregado.taxa) > 0.0: break
+            taxa = str(input('Taxa do sindicato: R$'))
+            if taxa.isnumeric() and float(taxa) > 0.0: break
             else: print('\nTaxa inválida!')
-        novo_empregado.id_sindicato = Empregado.id_sindicato + 1
-        Empregado.id_sindicato += 1
+        id_sindicato = Empregado.id_sindicato + 1
+        id_sindicato += 1
     elif sindicato == 'n':
-        novo_empregado.sindicato = False
+        sindicato = False
+        id_sindicato = -1
+        taxa = -1
+
     while True:
         prazo_pagamento = str(input("""Prazo de pagamento
 1 - Semanal
@@ -130,8 +87,8 @@ def adicionar_empregado():
 >> """))
         if prazo_pagamento.isnumeric() and 0 < int(prazo_pagamento) < 4: break
         else: print('\nPrazo inválido!')
-    prazo_pagamento = int(prazo_pagamento)
-    novo_empregado.p_pagamento = prazo_pagamento - 1
+    prazo_pagamento = int(prazo_pagamento) - 1
+
     while True:
         forma_pagamento = str(input("""Forma de pagamento
 1 - Cheque correios
@@ -140,8 +97,8 @@ def adicionar_empregado():
 >> """))
         if forma_pagamento.isnumeric() and 0 < int(forma_pagamento) < 4: break
         else: print('\nForma de pagamento inválida!')
-    forma_pagamento = int(forma_pagamento)
-    novo_empregado.f_pagamento = forma_pagamento - 1
+    forma_pagamento = int(forma_pagamento) - 1
+
     while True:
         dia_preferido = str(input("""Dia preferido para pagamento
 2 - Segunda
@@ -152,11 +109,11 @@ def adicionar_empregado():
 >> """))
         if dia_preferido.isnumeric() and 1 < int(dia_preferido) < 7: break
         else: print('\nDia inválido!')
-    novo_empregado.dia_preferido = int(dia_preferido)
+    dia_preferido = int(dia_preferido)
     data_hoje = date.today()
-    if prazo_pagamento == 1:
+    if prazo_pagamento == 0:
         delta = timedelta(days = 7)
-    elif prazo_pagamento == 2:
+    elif prazo_pagamento == 1:
         if data_hoje.month in [1, 3, 5, 7, 8, 10, 12]:
             delta = timedelta(days = 31)
         elif data_hoje.month == 2:
@@ -166,13 +123,54 @@ def adicionar_empregado():
                 delta = timedelta(days = 28)
         else:
             delta = timedelta(days = 30)
-    elif prazo_pagamento == 3:
+    elif prazo_pagamento == 2:
         delta = timedelta(days = 15)
     data_hoje += delta
-    novo_empregado.proximo_pagamento = data_hoje.strftime('%d/%m/%Y')
+    proximo_pagamento = data_hoje.strftime('%d/%m/%Y')
+
+    while True:
+        tipo = str(input("""Tipo de empregado
+1 - Horário
+2 - Assalariado
+3 - Comissionado
+>> """))
+        if tipo.isnumeric() and 0 < int(tipo) < 4: break
+        else: print('\nOpção inválida!')
+    tipo = int(tipo) - 1
+    if tipo == 0:
+        while True:
+            valor_hora = str(input('Valor da hora: R$'))
+            if valor_hora.isnumeric() and float(valor_hora) > 0.0:
+                valor_hora = float(valor_hora)
+                break
+            else: print('\nValor inválido!')
+        novo_empregado = Horario(id_empregado, nome, endereço, tipo, forma_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, '', proximo_pagamento, prazo_pagamento, valor_hora)
+
+    elif tipo == 1:
+        while True:
+            salario = str(input('Salário: R$'))
+            if salario.isnumeric() and float(salario) > 0.0:
+                salario = float(salario)
+                break
+            else: print('\nSalário inválido!')
+        novo_empregado = Assalariado(id_empregado, nome, endereço, tipo, forma_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, '', proximo_pagamento, prazo_pagamento, salario)
+
+    elif tipo == 2:
+        while True:
+            salario = str(input('Salário: R$'))
+            if salario.isnumeric() and float(salario) > 0.0:
+                salario = float(salario)
+                break
+            else: print('\nSalário inválido!')
+        while True:
+            comissao = str(input('Comissão (sem o sinal de %): '))
+            if comissao.isnumeric() and 0.0 < float(comissao) <= 100.0:
+                comissao = float(comissao)
+                break
+            else: print('\nComissão inválida!')
+        novo_empregado = Comissionado(id_empregado, nome, endereço, tipo, forma_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, '', proximo_pagamento, prazo_pagamento, salario, comissao)
 
     Empregado.empregados.append(novo_empregado)
-    Empregado.id_empregado += 1
     print('\nEmpregado cadastrado com sucesso!')
 
 
@@ -224,6 +222,7 @@ def editar_empregado():
             if editar.isnumeric() and 0 < int(editar) < 8: break
             else: print('\nOpção inválida!')
         editar = int(editar)
+
         if editar == 1:
             while True:
                 ruim = False
@@ -234,6 +233,7 @@ def editar_empregado():
                         break
                 if not ruim: break
                 else: print('\nNome inválido!')
+
         elif editar == 2:
             while True:
                 ruim = False
@@ -244,6 +244,7 @@ def editar_empregado():
                         break
                 if not ruim: break
                 else: print('\nEndereço inválido!')
+
         elif editar == 3:
             while True:
                 tipo = str(input("""\nTipo de empregado
@@ -254,20 +255,29 @@ def editar_empregado():
                 if tipo.isnumeric() and 0 < int(tipo) < 4: break
                 else: print('\nTipo inválido!')
             tipo = int(tipo)
-            aux_func.tipo = tipo - 1
-            while True:
-                aux_func.salario = str(input('Salário: R$'))
-                if aux_func.salario.isnumeric():
-                    aux_func.salario = float(aux_func.salario)
-                    break
-                else: print('\nSalário inválido!')
-            if tipo == 3:
+            aux_func.t_empregado = tipo - 1
+            if tipo == 1:
                 while True:
-                    aux_func.comissao = str(input('Comissão (sem o sinal de %): '))
-                    if aux_func.comissao.isnumeric() and 0.0 < float(aux_func.comissao) <= 100.0:
-                        aux_func.comissao = float(aux_func.comissao)
+                    aux_func.valor_hora = str(input('Valor da hora: R$'))
+                    if aux_func.valor_hora.isnumeric():
+                        aux_func.valor_hora = float(aux_func.valor_hora)
                         break
-                    else: print('\nComissão inválida!')
+                    else: print('\nValor inválido!')
+            elif tipo == 2 or tipo == 3:
+                while True:
+                    aux_func.salario = str(input('Salário: R$'))
+                    if aux_func.salario.isnumeric():
+                        aux_func.salario = float(aux_func.salario)
+                        break
+                    else: print('\nSalário inválido!')
+                if tipo == 3:
+                    while True:
+                        aux_func.comissao = str(input('Comissão (sem o sinal de %): '))
+                        if aux_func.comissao.isnumeric() and 0.0 < float(aux_func.comissao) <= 100.0:
+                            aux_func.comissao = float(aux_func.comissao)
+                            break
+                        else: print('\nComissão inválida!')
+
         elif editar == 4:
             while True:
                 sindicato = str(input('Pertence a sindicato? (s/n) ')).lower().strip()[0]
@@ -285,6 +295,7 @@ def editar_empregado():
                 Empregado.id_sindicato += 1
             elif sindicato == 'n':
                 aux_func.sindicato = False
+
         elif editar == 5:
             while True:
                 prazo_pagamento = str(input("""Prazo de pagamento
@@ -324,6 +335,7 @@ def editar_empregado():
                 delta = timedelta(days = 15)
             data_hoje += delta
             aux_func.proximo_pagamento = data_hoje.strftime('%d/%m/%Y')
+
         elif editar == 6:
             while True:
                 forma_pagamento = str(input("""Forma de pagamento
@@ -359,41 +371,13 @@ def func_empregado():
         if opção == 1: adicionar_empregado()
         elif opção == 2: remover_empregado()
         elif opção == 3: editar_empregado()
-        elif opção == 4: mostrar_empregados()
+        elif opção == 4: Empregado.mostrar_empregados()
         elif opção == 5: return
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                           CARTÃO PONTO                           """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-def mostrar_pontos():
-    print('\n-=-=- CARTÕES PONTO -=-=-')
-    if CartãoPonto.pontos:
-        for ponto in CartãoPonto.pontos:
-            print(f'\nNome: {Empregado.empregados[ponto.id_empregado - 1].nome}')
-            print(f'ID: {ponto.id_empregado}')
-            print(f'Data: {ponto.data}')
-            print(f'Entrada: {ponto.entrada}')
-            print('Funcionário ainda em serviço' if not ponto.entrando else f'Saída: {ponto.saída}')
-    else: print('\nNão há pontos lançados!')
-
-
-def func_cartão_ponto():
-    while True:
-        menu_cartão_ponto()
-        while True:
-            opção = str(input())
-            if opção.isnumeric() and 0 < int(opção) < 5: break
-            else: print('\nOpção inválida!\n')
-
-        opção = int(opção)
-
-        if opção == 1: lançar_cartão_ponto(1)
-        elif opção == 2: lançar_cartão_ponto(0)
-        elif opção == 3: mostrar_pontos()
-        elif opção == 4: return
-
 
 def localizar_ponto(data, id_emp):
     for ponto in CartãoPonto.pontos:
@@ -443,35 +427,24 @@ def lançar_cartão_ponto(opc):
             print('Ponto de saída OK!\n')
 
 
+def func_cartão_ponto():
+    while True:
+        menu_cartão_ponto()
+        while True:
+            opção = str(input())
+            if opção.isnumeric() and 0 < int(opção) < 5: break
+            else: print('\nOpção inválida!\n')
+
+        opção = int(opção)
+
+        if opção == 1: lançar_cartão_ponto(1)
+        elif opção == 2: lançar_cartão_ponto(0)
+        elif opção == 3: CartãoPonto.mostrar_pontos()
+        elif opção == 4: return
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                              VENDAS                              """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-def func_vendas():
-    while True:
-        menu_vendas()
-        while True:
-            opção = str(input())
-            if opção.isnumeric() and 0 < int(opção) < 4: break
-            else: print('\nOpção inválida!\n')
-        opção = int(opção)
-
-        if opção == 1: lançar_venda()
-        elif opção == 2: mostrar_vendas()
-        elif opção == 3: return
-
-
-def mostrar_vendas():
-    print('\n-=-=- VENDAS EFETUADAS -=-=-', end='')
-    if Venda.vendas:
-        for venda in Venda.vendas:
-            if venda.ativo:
-                print(f'\nID Empregado: {venda.id_empregado}')
-                print(f'Nome: {Empregado.empregados[venda.id_empregado - 1].nome}')
-                print(f'Valor da venda: R${venda.valor:.2f}')
-                print(f'Data da venda: {venda.data}')
-    else: print('\nNão há vendas cadastradas!')
-
 
 def lançar_venda():
     print('\n-=-=- REGISTRAR VENDA -=-=-')
@@ -490,7 +463,21 @@ def lançar_venda():
     venda.id_empregado = aux_func.id_empregado
 
     Venda.vendas.append(venda)
+    print('\nVenda registrada com sucesso!')
 
+
+def func_vendas():
+    while True:
+        menu_vendas()
+        while True:
+            opção = str(input())
+            if opção.isnumeric() and 0 < int(opção) < 4: break
+            else: print('\nOpção inválida!\n')
+        opção = int(opção)
+
+        if opção == 1: lançar_venda()
+        elif opção == 2: Venda.mostrar_vendas()
+        elif opção == 3: return
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                        FOLHA DE PAGAMENTO                        """
@@ -524,9 +511,9 @@ def calcular_salario(emp):
     elif emp.t_empregado == 1:
         salario = emp.salario
     elif emp.t_empregado == 2:
-        salario = 0
+        salario = emp.salario
         for venda in Venda.vendas:
-            if venda.id_empregado == emp.id_empregado and venda.data > emp.ultimo_pagamento:
+            if venda.id_empregado == emp.id_empregado:
                 salario += ((emp.comissao) / 100) * venda.valor
     for taxa in TaxaDeServiço.taxas:
         if taxa.id_empregado == emp.id_empregado and taxa.mes == date.today().month:
@@ -552,20 +539,6 @@ def rodar_folha():
 """                         TAXAS DE SERVIÇO                         """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def func_taxas_serviço():
-    while True:
-        menu_taxas_serviço()
-        while True:
-            opção = str(input())
-            if opção.isnumeric() and 0 < int(opção) < 4: break
-            else: print('\nOpção inválida!\n')
-        opção = int(opção)
-
-        if opção == 1: lançar_taxa_serviço()
-        elif opção == 2: mostrar_taxas_serviço()
-        elif opção == 3: return
-
-
 def lançar_taxa_serviço():
     taxa = TaxaDeServiço()
     taxa.valor = float(input('Valor da taxa: R$'))
@@ -581,17 +554,18 @@ def lançar_taxa_serviço():
     print('Taxa associada com sucesso!')
 
 
-def mostrar_taxas_serviço():
-    print('\n-=-=- TAXAS REGISTRADAS -=-=-', end='')
-    if TaxaDeServiço.taxas:
-        for taxa in TaxaDeServiço.taxas:
-            if taxa.ativo:
-                print(f'\nValor da taxa: {taxa.valor:.2f}')
-                print(f'Nome: {Empregado.empregados[taxa.id_empregado - 1].nome}')
-                print(f'ID: {taxa.id_empregado}')
-                print(f'Mês da taxa: {meses[taxa.mes]}')
-    else: print('\nNão há taxas de serviço cadastradas!')
+def func_taxas_serviço():
+    while True:
+        menu_taxas_serviço()
+        while True:
+            opção = str(input())
+            if opção.isnumeric() and 0 < int(opção) < 4: break
+            else: print('\nOpção inválida!\n')
+        opção = int(opção)
 
+        if opção == 1: lançar_taxa_serviço()
+        elif opção == 2: TaxaDeServiço.mostrar_taxas_serviço()
+        elif opção == 3: return
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                       AGENDAS DE PAGAMENTO                       """
@@ -607,6 +581,7 @@ def listar_agendas():
                 print(f'Forma de pagamento: {Empregado.forma_pagamento[empregado.f_pagamento]}')
                 print(f'Prazo de pagamento: {Empregado.prazo_pagamento[empregado.p_pagamento]}')
                 print(f'Próximo pagamento: {empregado.proximo_pagamento}')
+                print(f'Salário a receber: {calcular_salario(empregado):.2f}')
     else: print('\nNão há funcionários cadastrados!')
 
 
