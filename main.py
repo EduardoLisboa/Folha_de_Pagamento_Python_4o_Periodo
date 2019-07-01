@@ -341,6 +341,7 @@ def editar_empregado():
                 else: print('\nForma de pagamento inválida!')
             forma_pagamento = int(forma_pagamento)
             aux_func.f_pagamento = forma_pagamento - 1
+
         elif editar == 7:
             return
     
@@ -477,6 +478,7 @@ def func_vendas():
         if opção == 1: lançar_venda()
         elif opção == 2: Venda.mostrar_vendas()
         elif opção == 3: return
+
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                        FOLHA DE PAGAMENTO                        """
