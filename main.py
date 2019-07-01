@@ -405,19 +405,24 @@ def lançar_cartão_ponto(opc):
         CartãoPonto.pontos.append(ponto)
         print('Ponto de entrada OK!\n')
 
-    elif opc == 0:
+    elif opc == 2:
         aux_func = localizar_empregado()
         if not aux_func: print('\nNão há empregados com esse ID!'); return
         print(f'\nNome: {aux_func.nome}\n')
 
         data = date.today().strftime('%d/%m/%Y')
         hora = datetime.now()
-        hora = hora.strftime('%H:%M:%S')
+        hora_agora = hora.strftime('%H:%M:%S')
         ponto = localizar_ponto(data, aux_func.id_empregado)
         if not ponto: print('\nCartão ponto não consta no sistema!')
         else:
-            ponto.saída = hora
+            ponto.saída = hora_agora
             ponto.entrando = True
+            if aux_func.t_empregado == 0:
+                hora_entrada = datetime(year=date.today().year, month=date.today().month, day=date.today().day, hour=int(ponto.entrada[:2]), minute=int(ponto.entrada[3:5]), second=int(ponto.entrada[6:8]))
+                hora_saida = hora
+                delta = int(float(hora_saida.strftime('%H.%M'))) - int(float(hora_entrada.strftime('%H.%M')))
+                aux_func.horas_trabalhadas += delta
             print('Ponto de saída OK!\n')
 
 
@@ -432,7 +437,7 @@ def func_cartão_ponto():
         opção = int(opção)
 
         if opção == 1: lançar_cartão_ponto(1)
-        elif opção == 2: lançar_cartão_ponto(0)
+        elif opção == 2: lançar_cartão_ponto(2)
         elif opção == 3: CartãoPonto.mostrar_pontos()
         elif opção == 4: return
 
@@ -499,9 +504,7 @@ def atualizar_data(emp, data_hoje):
 
 def calcular_salario(emp):
     if emp.t_empregado == 0:
-        salario = emp.salario * 40
-        if emp.p_pagamento == 1: salario *= 4
-        elif emp.p_pagamento == 2: salario *= 2
+        salario = emp.valor_hora * emp.horas_trabalhadas
     elif emp.t_empregado == 1:
         salario = emp.salario
     elif emp.t_empregado == 2:
@@ -512,6 +515,8 @@ def calcular_salario(emp):
     for taxa in TaxaDeServiço.taxas:
         if taxa.id_empregado == emp.id_empregado and taxa.mes == date.today().month:
             salario -= taxa.valor
+    if emp.sindicato:
+        salario -= emp.taxa
     return salario
 
 

@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 class Empregado():
     id_empregado = 0
     id_sindicato = 0
@@ -66,7 +68,7 @@ class Horario(Empregado):
     def __init__(self, id_empregado, nome, endereço, t_empregado, f_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, ultimo_pagamento, proximo_pagamento, p_pagamento, valor_hora):
         super().__init__(id_empregado, nome, endereço, t_empregado, f_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, ultimo_pagamento, proximo_pagamento, p_pagamento)
         self.valor_hora = valor_hora
-        self.horas_trabalhadas = int
+        self.horas_trabalhadas = 0
 
 
 class Assalariado(Empregado):
