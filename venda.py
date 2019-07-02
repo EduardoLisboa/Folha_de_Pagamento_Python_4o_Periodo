@@ -1,4 +1,5 @@
 from empregado import Empregado
+from transação import Transação
 
 class Venda():
     vendas = []

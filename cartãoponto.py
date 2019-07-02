@@ -1,4 +1,5 @@
 from empregado import Empregado
+from transação import Transação
 
 class CartãoPonto():
     pontos = []
@@ -22,3 +23,11 @@ class CartãoPonto():
                 print(f'Entrada: {ponto.entrada}')
                 print('Funcionário ainda em serviço' if not ponto.entrando else f'Saída: {ponto.saída}')
         else: print('\nNão há pontos lançados!')
+
+
+    @staticmethod
+    def localizar_ponto(data, id_emp):
+        for ponto in CartãoPonto.pontos:
+            if data == ponto.data and ponto.id_empregado == id_emp and not ponto.entrando:
+                return ponto
+        return False

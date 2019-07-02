@@ -1,4 +1,5 @@
 from datetime import timedelta
+from transação import Transação
 
 class Empregado():
     id_empregado = 0
@@ -14,8 +15,6 @@ class Empregado():
         self.endereço = endereço
         # 0 - Horário, 1 = Assalariado, 2 = Comissionado
         self.t_empregado = t_empregado
-        # self.salario = float
-        # self.comissao = float
 
         # 0 - Cheque correios, 1 = Cheque mãos, 2 = Depósito bancário
         self.f_pagamento = f_pagamento
@@ -33,16 +32,19 @@ class Empregado():
 
 
     @staticmethod
-    def localizar_empregado():
-        while True:
-            id_func = str(input('Insira o ID do funcionário: '))
-            if id_func.isnumeric(): break
-            else: print('\nID inválido!')
-        id_func = int(id_func)
-        for empregado in Empregado.empregados:
-            if id_func == empregado.id_empregado:
-                return empregado
-        return False
+    def localizar_empregado(id_emp = -1):
+        if id_emp == -1:
+            while True:
+                id_func = str(input('Insira o ID do funcionário: '))
+                if id_func.isnumeric(): break
+                else: print('\nID inválido!')
+            id_func = int(id_func)
+            for empregado in Empregado.empregados:
+                if id_func == empregado.id_empregado:
+                    return empregado
+            return False
+        else:
+            return Empregado.empregados[id_emp - 1]
 
 
     @staticmethod
@@ -83,6 +85,32 @@ class Horario(Empregado):
         self.valor_hora = valor_hora
         self.horas_trabalhadas = 0
 
+    
+    def duplicar(self):
+        copia = Horario(self.id_empregado, self.nome, self.endereço,
+        self.t_empregado, self.f_pagamento, self.dia_preferido,
+        self.ativo, self.sindicato, self.taxa, self.id_sindicato,
+        self.ultimo_pagamento, self.proximo_pagamento,
+        self.p_pagamento, self.valor_hora)
+        Transação.trns_efetuada.append(copia)
+    
+
+    def restaurar(self, other):
+        self.id_empregado = other.id_empregado
+        self.nome = other.nome
+        self.endereço = other.endereço
+        self.t_empregado = other.t_empregado
+        self.f_pagamento = other.f_pagamento
+        self.dia_preferido = other.dia_preferido
+        self.ativo = other.ativo
+        self.sindicato = other.sindicato
+        self.taxa = other.taxa
+        self.id_sindicato = other.id_sindicato
+        self.ultimo_pagamento = other.ultimo_pagamento
+        self.proximo_pagamento = other.proximo_pagamento
+        self.p_pagamento = other.p_pagamento
+        self.valor_hora = other.valor_hora
+
 
 class Assalariado(Empregado):
 
@@ -91,9 +119,62 @@ class Assalariado(Empregado):
         self.salario = salario
 
 
+    def duplicar(self):
+        copia = Horario(self.id_empregado, self.nome, self.endereço,
+        self.t_empregado, self.f_pagamento, self.dia_preferido,
+        self.ativo, self.sindicato, self.taxa, self.id_sindicato,
+        self.ultimo_pagamento, self.proximo_pagamento,
+        self.p_pagamento, self.salario)
+        Transação.trns_efetuada.append(copia)
+
+
+    def restaurar(self, other):
+        self.id_empregado = other.id_empregado
+        self.nome = other.nome
+        self.endereço = other.endereço
+        self.t_empregado = other.t_empregado
+        self.f_pagamento = other.f_pagamento
+        self.dia_preferido = other.dia_preferido
+        self.ativo = other.ativo
+        self.sindicato = other.sindicato
+        self.taxa = other.taxa
+        self.id_sindicato = other.id_sindicato
+        self.ultimo_pagamento = other.ultimo_pagamento
+        self.proximo_pagamento = other.proximo_pagamento
+        self.p_pagamento = other.p_pagamento
+        self.salario = other.salario
+
+
 class Comissionado(Empregado):
 
     def __init__(self, id_empregado, nome, endereço, t_empregado, f_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, ultimo_pagamento, proximo_pagamento, p_pagamento, salario, comissao):
         super().__init__(id_empregado, nome, endereço, t_empregado, f_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, ultimo_pagamento, proximo_pagamento, p_pagamento)
         self.salario = salario
         self.comissao = comissao
+    
+
+    def duplicar(self):
+        copia = Horario(self.id_empregado, self.nome, self.endereço,
+        self.t_empregado, self.f_pagamento, self.dia_preferido,
+        self.ativo, self.sindicato, self.taxa, self.id_sindicato,
+        self.ultimo_pagamento, self.proximo_pagamento,
+        self.p_pagamento, self.salario, self.comissao)
+        Transação.trns_efetuada.append(copia)
+
+    
+    def restaurar(self, other):
+        self.id_empregado = other.id_empregado
+        self.nome = other.nome
+        self.endereço = other.endereço
+        self.t_empregado = other.t_empregado
+        self.f_pagamento = other.f_pagamento
+        self.dia_preferido = other.dia_preferido
+        self.ativo = other.ativo
+        self.sindicato = other.sindicato
+        self.taxa = other.taxa
+        self.id_sindicato = other.id_sindicato
+        self.ultimo_pagamento = other.ultimo_pagamento
+        self.proximo_pagamento = other.proximo_pagamento
+        self.p_pagamento = other.p_pagamento
+        self.salario = other.salario
+        self.comissao = other.comissao

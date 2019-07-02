@@ -154,6 +154,9 @@ def adicionar_empregado():
         novo_empregado = Comissionado(id_empregado, nome, endereço, tipo, forma_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, '', proximo_pagamento, prazo_pagamento, salario, comissao)
 
     Empregado.empregados.append(novo_empregado)
+    novo_empregado.duplicar()
+    Transação.trns_ultima.append(['Adicionar', novo_empregado.id_empregado])
+    Transação.index_ultima += 1
     print('\nEmpregado cadastrado com sucesso!')
 
 
@@ -173,6 +176,9 @@ def remover_empregado():
                 if venda.id_empregado == aux_func.id_empregado: venda.ativo = False
             for taxa in TaxaDeServiço.taxas:
                 if taxa.id_empregado == aux_func.id_empregado: taxa.ativo = False
+            Transação.trns_ultima.append(['Remover', aux_func.id_empregado])
+            Transação.index_ultima += 1
+            print('\nFuncionário removido com sucesso!')
             break
         elif confirmação == 'n': return 
 
@@ -337,6 +343,9 @@ def editar_empregado():
         elif editar == 7:
             return
     
+        aux_func.duplicar()
+        Transação.trns_ultima.append('Editar')
+        Transação.index_ultima += 1
         while True:
             continuar = str(input('Deseja editar algo mais? (s/n) ')).lower().strip()[0]
             if continuar.isalpha() and continuar in 'ns': break
@@ -365,12 +374,6 @@ def func_empregado():
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                           CARTÃO PONTO                           """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-def localizar_ponto(data, id_emp):
-    for ponto in CartãoPonto.pontos:
-        if data == ponto.data and ponto.id_empregado == id_emp and not ponto.entrando:
-            return ponto
-    return False
 
 
 def lançar_cartão_ponto(opc):
@@ -408,7 +411,7 @@ def lançar_cartão_ponto(opc):
         data = date.today().strftime('%d/%m/%Y')
         hora = datetime.now()
         hora_agora = hora.strftime('%H:%M:%S')
-        ponto = localizar_ponto(data, aux_func.id_empregado)
+        ponto = CartãoPonto.localizar_ponto(data, aux_func.id_empregado)
         if not ponto: print('\nCartão ponto não consta no sistema!')
         else:
             ponto.saída = hora_agora
@@ -479,6 +482,7 @@ def func_vendas():
 """                        FOLHA DE PAGAMENTO                        """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
 def atualizar_data(emp, data_hoje):
     prazo = emp.p_pagamento
     if prazo == 0:
@@ -535,6 +539,7 @@ def rodar_folha():
 """                         TAXAS DE SERVIÇO                         """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
 def lançar_taxa_serviço():
     taxa = TaxaDeServiço()
     taxa.valor = float(input('Valor da taxa: R$'))
@@ -564,9 +569,11 @@ def func_taxas_serviço():
         elif opção == 2: TaxaDeServiço.mostrar_taxas_serviço()
         elif opção == 3: return
 
+
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                       AGENDAS DE PAGAMENTO                       """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 
 def listar_agendas():
     print('\n-=-=- AGENDAS DE PAGAMENTOS -=-=-', end='')
@@ -586,9 +593,19 @@ def listar_agendas():
 """                           UNDO E REDO                            """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def undo():
-    pass
 
+def undo():
+    if Transação.index_ultima < 0:
+        print('\nNenhuma operação para desfazer!')
+        return
+    if Transação.trns_ultima[Transação.index_ultima][0] == 'Adicionar':
+        aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
+        aux_func.ativo = False
+        Transação.index_ultima -= 1
+    elif Transação.trns_ultima[Transação.index_ultima][0] == 'Remover':
+        aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
+        aux_func.ativo = True
+        Transação.index_ultima -= 1
 
 def redo():
     pass
@@ -598,11 +615,12 @@ def redo():
 """                        PROGRAMA PRINCIPAL                        """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
 while True:
     menu_principal()
     while True:
         opção = str(input())
-        if opção.isnumeric() and 0 < int(opção) < 10:
+        if opção.isnumeric() and 0 < int(opção) < 11:
             break
         else:
             print('\nOpção inválida!\n>> ', end='')
@@ -620,3 +638,6 @@ while True:
     elif opção == 9:
         print('\nAté logo!\n')
         exit()
+    elif opção == 10:
+        print(Transação.trns_efetuada)
+        print(Transação.trns_ultima, Transação.index_ultima)
