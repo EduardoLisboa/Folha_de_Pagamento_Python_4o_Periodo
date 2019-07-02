@@ -11,7 +11,7 @@ class CartãoPonto():
         self.id_empregado = int
 
 
-    @staticmethod
+    @classmethod
     def mostrar_pontos():
         print('\n-=-=- CARTÕES PONTO -=-=-')
         if CartãoPonto.pontos:

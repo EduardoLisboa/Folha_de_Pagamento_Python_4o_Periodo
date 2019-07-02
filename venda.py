@@ -10,7 +10,7 @@ class Venda():
         self.id_empregado = int
 
     
-    @staticmethod
+    @classmethod
     def mostrar_vendas():
         print('\n-=-=- VENDAS EFETUADAS -=-=-', end='')
         if Venda.vendas:

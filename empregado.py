@@ -32,7 +32,7 @@ class Empregado():
         self.p_pagamento = p_pagamento
 
 
-    @staticmethod
+    @classmethod
     def mostrar_empregados():
         print('\n-=-=- EMPREGADOS -=-=-', end='')
         continuar = False

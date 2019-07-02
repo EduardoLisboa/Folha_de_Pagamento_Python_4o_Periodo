@@ -15,7 +15,7 @@ class TaxaDeServiço():
         self.id_empregado = int
 
 
-    @staticmethod
+    @classmethod
     def mostrar_taxas_serviço():
         print('\n-=-=- TAXAS REGISTRADAS -=-=-', end='')
         if TaxaDeServiço.taxas:
