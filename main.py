@@ -9,6 +9,7 @@ from datetime import date, timedelta, datetime
 """                          FUNÇÕES GERAIS                          """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+
 def checar_ano_bissexto(data):
     return True if data.year % 4 == 0 and data.year % 100 != 0 or data.year % 400 == 0 else False
 

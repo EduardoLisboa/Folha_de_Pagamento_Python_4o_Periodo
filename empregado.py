@@ -76,7 +76,6 @@ class Empregado():
             print('\nNão há funcionários cadastrados!')
 
 
-
 class Horario(Empregado):
     
     def __init__(self, id_empregado, nome, endereço, t_empregado, f_pagamento, dia_preferido, ativo, sindicato, taxa, id_sindicato, ultimo_pagamento, proximo_pagamento, p_pagamento, valor_hora):
