@@ -17,18 +17,6 @@ def checar_ano_bissexto(data):
 """                            EMPREGADOS                            """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-def localizar_empregado():
-    while True:
-        id_func = str(input('Insira o ID do funcionário: '))
-        if id_func.isnumeric(): break
-        else: print('\nID inválido!')
-    id_func = int(id_func)
-    for empregado in Empregado.empregados:
-        if id_func == empregado.id_empregado:
-            print('\nFuncionário localizado!')
-            return empregado
-    return False
-
 
 def adicionar_empregado():
     print('\n-=-=- ADICIONAR -=-=-')
@@ -171,7 +159,8 @@ def adicionar_empregado():
 def remover_empregado():
     while True:
         print('\n-=-=- REMOVER -=-=-')
-        aux_func = localizar_empregado()
+        aux_func = Empregado.localizar_empregado()
+        print('\nFuncionário localizado!')
         print(f'\nNome: {aux_func.nome}\n')
         while True:
             confirmação = str(input('Confirmar remoção do funcionário? (s/n) ')).lower().strip()[0]
@@ -191,10 +180,12 @@ def editar_empregado():
     while True:
         print('\n-=-=- EDITAR -=-=-')
         while True:
-            aux_func = localizar_empregado()
+            aux_func = Empregado.localizar_empregado()
             if not aux_func:
                 print('\nNão existe funcionário com esse ID!')
-            else: break
+            else:
+                print('\nFuncionário localizado!')
+                break
 
         print(f'\nNome: {aux_func.nome}')
         print(f'Endereço: {aux_func.endereço}')
@@ -385,8 +376,9 @@ def lançar_cartão_ponto(opc):
     if opc == 1:
         ponto = CartãoPonto()
 
-        aux_func = localizar_empregado()
+        aux_func = Empregado.localizar_empregado()
         if not aux_func: print('\nNão há empregados com esse ID!'); return
+        print('\nFuncionário localizado!')
         print(f'\nNome: {aux_func.nome}\n')
         
         hora = datetime.now()
@@ -407,8 +399,9 @@ def lançar_cartão_ponto(opc):
         print('Ponto de entrada OK!\n')
 
     elif opc == 2:
-        aux_func = localizar_empregado()
+        aux_func = Empregado.localizar_empregado()
         if not aux_func: print('\nNão há empregados com esse ID!'); return
+        print('\nFuncionário localizado!')
         print(f'\nNome: {aux_func.nome}\n')
 
         data = date.today().strftime('%d/%m/%Y')
@@ -455,8 +448,9 @@ def lançar_venda():
         else: print('\nValor inválido!')
     data_venda = date.today()
     print('Empregado responsável pela venda:')
-    aux_func = localizar_empregado()
+    aux_func = Empregado.localizar_empregado()
     if not aux_func: print('\nNão há empregados com esse ID!'); return
+    print('\nFuncionário localizado!')
     venda.valor = float(valor)
     venda.ativo = True
     venda.data = data_venda.strftime('%d/%m/%Y')
@@ -544,8 +538,9 @@ def lançar_taxa_serviço():
     taxa = TaxaDeServiço()
     taxa.valor = float(input('Valor da taxa: R$'))
     print('Funcionário associado à taxa:')
-    aux_func = localizar_empregado()
+    aux_func = Empregado.localizar_empregado()
     if not aux_func: print('\nNão há empregados com esse ID!'); return
+    print('\nFuncionário localizado!')
     print(f'\nNome: {aux_func.nome}')
     taxa.id_empregado = aux_func.id_empregado
     taxa.mes = date.today().month

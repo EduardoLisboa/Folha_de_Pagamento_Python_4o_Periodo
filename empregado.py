@@ -32,7 +32,20 @@ class Empregado():
         self.p_pagamento = p_pagamento
 
 
-    @classmethod
+    @staticmethod
+    def localizar_empregado():
+        while True:
+            id_func = str(input('Insira o ID do funcionário: '))
+            if id_func.isnumeric(): break
+            else: print('\nID inválido!')
+        id_func = int(id_func)
+        for empregado in Empregado.empregados:
+            if id_func == empregado.id_empregado:
+                return empregado
+        return False
+
+
+    @staticmethod
     def mostrar_empregados():
         print('\n-=-=- EMPREGADOS -=-=-', end='')
         continuar = False
@@ -61,6 +74,7 @@ class Empregado():
                     print(f'Próximo pagamento: {emp.proximo_pagamento}')
         else:
             print('\nNão há funcionários cadastrados!')
+
 
 
 class Horario(Empregado):
