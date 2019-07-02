@@ -344,7 +344,7 @@ def editar_empregado():
             return
     
         aux_func.duplicar()
-        Transação.trns_ultima.append('Editar')
+        Transação.trns_ultima.append(['Editar', aux_func.id_empregado])
         Transação.index_ultima += 1
         while True:
             continuar = str(input('Deseja editar algo mais? (s/n) ')).lower().strip()[0]
@@ -606,6 +606,11 @@ def undo():
         aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
         aux_func.ativo = True
         Transação.index_ultima -= 1
+    elif Transação.trns_ultima[Transação.index_ultima][0] == 'Editar':
+        aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
+        aux_func.restaurar(Transação.trns_efetuada[Transação.index_efetuada - 1])
+        Transação.index_ultima -= 1
+        Transação.index_efetuada -= 1
 
 def redo():
     pass

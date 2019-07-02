@@ -93,6 +93,7 @@ class Horario(Empregado):
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.valor_hora)
         Transação.trns_efetuada.append(copia)
+        Transação.index_efetuada += 1
     
 
     def restaurar(self, other):
@@ -120,12 +121,13 @@ class Assalariado(Empregado):
 
 
     def duplicar(self):
-        copia = Horario(self.id_empregado, self.nome, self.endereço,
+        copia = Assalariado(self.id_empregado, self.nome, self.endereço,
         self.t_empregado, self.f_pagamento, self.dia_preferido,
         self.ativo, self.sindicato, self.taxa, self.id_sindicato,
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.salario)
         Transação.trns_efetuada.append(copia)
+        Transação.index_efetuada += 1
 
 
     def restaurar(self, other):
@@ -154,12 +156,13 @@ class Comissionado(Empregado):
     
 
     def duplicar(self):
-        copia = Horario(self.id_empregado, self.nome, self.endereço,
+        copia = Comissionado(self.id_empregado, self.nome, self.endereço,
         self.t_empregado, self.f_pagamento, self.dia_preferido,
         self.ativo, self.sindicato, self.taxa, self.id_sindicato,
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.salario, self.comissao)
         Transação.trns_efetuada.append(copia)
+        Transação.index_efetuada += 1
 
     
     def restaurar(self, other):
