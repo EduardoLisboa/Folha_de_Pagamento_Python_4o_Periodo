@@ -614,6 +614,7 @@ def undo():
     aux_func = Empregado.localizar_empregado(transação[1])
     if transação[0] == 'Adicionar':
         aux_func.ativo = False
+        Empregado.id_empregado -= 1
 
     elif transação[0] == 'Remover':
         aux_func.ativo = True
@@ -659,6 +660,7 @@ def redo():
     aux_func = Empregado.localizar_empregado(transação[1])
     if transação[0] == 'Adicionar':
         aux_func.ativo = True
+        Empregado.id_empregado += 1
 
     elif transação[0] == 'Remover':
         aux_func.ativo = False
