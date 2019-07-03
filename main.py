@@ -614,6 +614,7 @@ def undo():
     aux_func = Empregado.localizar_empregado(transação[1])
     if transação[0] == 'Adicionar':
         aux_func.ativo = False
+        Transação.limbo.append(Empregado.empregados.pop(transação[1] - 1))
         Empregado.id_empregado -= 1
 
     elif transação[0] == 'Remover':
@@ -657,12 +658,15 @@ def redo():
         return
 
     transação = Transação.trns_ultima_redo.pop()
-    aux_func = Empregado.localizar_empregado(transação[1])
     if transação[0] == 'Adicionar':
+        Empregado.empregados.insert(transação[1] - 1, Transação.limbo.pop())
+        aux_func = Empregado.localizar_empregado(transação[1])
         aux_func.ativo = True
         Empregado.id_empregado += 1
+    
+    aux_func = Empregado.localizar_empregado(transação[1])
 
-    elif transação[0] == 'Remover':
+    if transação[0] == 'Remover':
         aux_func.ativo = False
 
     elif transação[0] == 'Editar':

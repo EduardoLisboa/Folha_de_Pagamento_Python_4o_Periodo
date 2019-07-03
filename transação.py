@@ -8,3 +8,5 @@ class Transação():
 
     trns_undo = []
     trns_redo = []
+
+    limbo = []
