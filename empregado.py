@@ -93,6 +93,7 @@ class Horario(Empregado):
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.valor_hora)
         Transação.trns_efetuada.append(copia)
+        Transação.trns_undo.append(copia)
         Transação.index_efetuada += 1
     
 
@@ -127,6 +128,7 @@ class Assalariado(Empregado):
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.salario)
         Transação.trns_efetuada.append(copia)
+        Transação.trns_undo.append(copia)
         Transação.index_efetuada += 1
 
 
@@ -162,6 +164,7 @@ class Comissionado(Empregado):
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.salario, self.comissao)
         Transação.trns_efetuada.append(copia)
+        Transação.trns_undo.append(copia)
         Transação.index_efetuada += 1
 
     

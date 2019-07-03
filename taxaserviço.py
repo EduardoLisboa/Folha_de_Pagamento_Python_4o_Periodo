@@ -19,11 +19,15 @@ class TaxaDeServiço():
     @staticmethod
     def mostrar_taxas_serviço():
         print('\n-=-=- TAXAS REGISTRADAS -=-=-', end='')
+        continuar = True
         if TaxaDeServiço.taxas:
             for taxa in TaxaDeServiço.taxas:
                 if taxa.ativo:
+                    continuar = True
                     print(f'\nValor da taxa: {taxa.valor:.2f}')
                     print(f'Nome: {Empregado.empregados[taxa.id_empregado - 1].nome}')
                     print(f'ID: {taxa.id_empregado}')
                     print(f'Mês da taxa: {meses[taxa.mes]}')
+                else: continuar = False
         else: print('\nNão há taxas de serviço cadastradas!')
+        if not continuar: print('\nNão há taxas de serviço cadastradas!')

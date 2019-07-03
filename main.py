@@ -393,6 +393,7 @@ def lançar_cartão_ponto(opc):
         data_ponto = date.today().strftime('%d/%m/%Y')
         ponto.data = data_ponto
         ponto.id_empregado = aux_func.id_empregado
+        ponto.ativo = True
 
         for ponto in CartãoPonto.pontos:
             if aux_func.id_empregado == ponto.id_empregado and data_ponto == ponto.data:
@@ -400,6 +401,8 @@ def lançar_cartão_ponto(opc):
                 return
 
         CartãoPonto.pontos.append(ponto)
+        Transação.trns_undo.append(ponto)
+        Transação.trns_ultima.append(['Ponto', ponto.id_empregado])
         print('Ponto de entrada OK!\n')
 
     elif opc == 2:
@@ -461,6 +464,8 @@ def lançar_venda():
     venda.id_empregado = aux_func.id_empregado
 
     Venda.vendas.append(venda)
+    Transação.trns_ultima.append(['Venda', venda.id_empregado])
+    Transação.trns_undo.append(venda)
     print('\nVenda registrada com sucesso!')
 
 
@@ -553,6 +558,8 @@ def lançar_taxa_serviço():
     taxa.ativo = True
 
     TaxaDeServiço.taxas.append(taxa)
+    Transação.trns_undo.append(taxa)
+    Transação.trns_ultima.append(['Taxa', taxa.id_empregado])
     print('Taxa associada com sucesso!')
 
 
@@ -595,22 +602,34 @@ def listar_agendas():
 
 
 def undo():
-    if Transação.index_ultima < 0:
+    if len(Transação.trns_undo) == 0:
         print('\nNenhuma operação para desfazer!')
         return
-    if Transação.trns_ultima[Transação.index_ultima][0] == 'Adicionar':
-        aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
+    transação = Transação.trns_ultima.pop()
+    aux_func = Empregado.localizar_empregado(transação[1])
+    if transação[0] == 'Adicionar':
         aux_func.ativo = False
-        Transação.index_ultima -= 1
-    elif Transação.trns_ultima[Transação.index_ultima][0] == 'Remover':
-        aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
+
+    elif transação[0] == 'Remover':
         aux_func.ativo = True
-        Transação.index_ultima -= 1
-    elif Transação.trns_ultima[Transação.index_ultima][0] == 'Editar':
-        aux_func = Empregado.localizar_empregado(Transação.trns_ultima[Transação.index_ultima][1])
-        aux_func.restaurar(Transação.trns_efetuada[Transação.index_efetuada - 1])
-        Transação.index_ultima -= 1
-        Transação.index_efetuada -= 1
+
+    elif transação[0] == 'Editar':
+        aux_func.restaurar(Transação.trns_efetuada.pop(len(Transação.trns_efetuada) - 2))
+
+    elif transação[0] == 'Venda':
+        venda = Venda.vendas[len(Venda.vendas) - 1]
+        venda.ativo = False
+
+    elif transação[0] == 'Ponto':
+        ponto = CartãoPonto.pontos[len(CartãoPonto.pontos) - 1]
+        ponto.ativo = False
+
+    elif transação[0] == 'Taxa':
+        taxa = TaxaDeServiço.taxas[len(TaxaDeServiço.taxas) - 1]
+        taxa.ativo = False
+
+    Transação.trns_redo.append(Transação.trns_undo.pop())
+
 
 def redo():
     pass
@@ -646,3 +665,5 @@ while True:
     elif opção == 10:
         print(Transação.trns_efetuada)
         print(Transação.trns_ultima, Transação.index_ultima)
+        print(Transação.trns_undo)
+        print(Transação.trns_redo)

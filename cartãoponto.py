@@ -10,19 +10,25 @@ class CartãoPonto():
         self.saída = int
         self.data = int
         self.id_empregado = int
+        self.ativo = bool
 
 
     @staticmethod
     def mostrar_pontos():
-        print('\n-=-=- CARTÕES PONTO -=-=-')
+        print('\n-=-=- CARTÕES PONTO -=-=-', end='')
+        continuar = True
         if CartãoPonto.pontos:
             for ponto in CartãoPonto.pontos:
-                print(f'\nNome: {Empregado.empregados[ponto.id_empregado - 1].nome}')
-                print(f'ID: {ponto.id_empregado}')
-                print(f'Data: {ponto.data}')
-                print(f'Entrada: {ponto.entrada}')
-                print('Funcionário ainda em serviço' if not ponto.entrando else f'Saída: {ponto.saída}')
+                if ponto.ativo:
+                    continuar = True
+                    print(f'\nNome: {Empregado.empregados[ponto.id_empregado - 1].nome}')
+                    print(f'ID: {ponto.id_empregado}')
+                    print(f'Data: {ponto.data}')
+                    print(f'Entrada: {ponto.entrada}')
+                    print('Funcionário ainda em serviço' if not ponto.entrando else f'Saída: {ponto.saída}')
+                else: continuar = False
         else: print('\nNão há pontos lançados!')
+        if not continuar: print('\nNão há pontos lançados!')
 
 
     @staticmethod
