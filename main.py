@@ -155,8 +155,7 @@ def adicionar_empregado():
 
     Empregado.empregados.append(novo_empregado)
     novo_empregado.duplicar()
-    Transação.trns_ultima.append(['Adicionar', novo_empregado.id_empregado])
-    Transação.index_ultima += 1
+    Transação.trns_ultima_undo.append(['Adicionar', novo_empregado.id_empregado])
     print('\nEmpregado cadastrado com sucesso!')
 
 
@@ -176,8 +175,7 @@ def remover_empregado():
                 if venda.id_empregado == aux_func.id_empregado: venda.ativo = False
             for taxa in TaxaDeServiço.taxas:
                 if taxa.id_empregado == aux_func.id_empregado: taxa.ativo = False
-            Transação.trns_ultima.append(['Remover', aux_func.id_empregado])
-            Transação.index_ultima += 1
+            Transação.trns_ultima_undo.append(['Remover', aux_func.id_empregado])
             print('\nFuncionário removido com sucesso!')
             break
         elif confirmação == 'n': return 
@@ -344,8 +342,8 @@ def editar_empregado():
             return
     
         aux_func.duplicar()
-        Transação.trns_ultima.append(['Editar', aux_func.id_empregado])
-        Transação.index_ultima += 1
+        Transação.trns_ultima_undo.append(['Editar', aux_func.id_empregado])
+        
         while True:
             continuar = str(input('Deseja editar algo mais? (s/n) ')).lower().strip()[0]
             if continuar.isalpha() and continuar in 'ns': break
@@ -402,7 +400,7 @@ def lançar_cartão_ponto(opc):
 
         CartãoPonto.pontos.append(ponto)
         Transação.trns_undo.append(ponto)
-        Transação.trns_ultima.append(['Ponto', ponto.id_empregado])
+        Transação.trns_ultima_undo.append(['Ponto', ponto.id_empregado])
         print('Ponto de entrada OK!\n')
 
     elif opc == 2:
@@ -464,7 +462,7 @@ def lançar_venda():
     venda.id_empregado = aux_func.id_empregado
 
     Venda.vendas.append(venda)
-    Transação.trns_ultima.append(['Venda', venda.id_empregado])
+    Transação.trns_ultima_undo.append(['Venda', venda.id_empregado])
     Transação.trns_undo.append(venda)
     print('\nVenda registrada com sucesso!')
 
@@ -559,7 +557,7 @@ def lançar_taxa_serviço():
 
     TaxaDeServiço.taxas.append(taxa)
     Transação.trns_undo.append(taxa)
-    Transação.trns_ultima.append(['Taxa', taxa.id_empregado])
+    Transação.trns_ultima_undo.append(['Taxa', taxa.id_empregado])
     print('Taxa associada com sucesso!')
 
 
@@ -605,7 +603,8 @@ def undo():
     if len(Transação.trns_undo) == 0:
         print('\nNenhuma operação para desfazer!')
         return
-    transação = Transação.trns_ultima.pop()
+
+    transação = Transação.trns_ultima_undo.pop()
     aux_func = Empregado.localizar_empregado(transação[1])
     if transação[0] == 'Adicionar':
         aux_func.ativo = False
@@ -614,7 +613,9 @@ def undo():
         aux_func.ativo = True
 
     elif transação[0] == 'Editar':
-        aux_func.restaurar(Transação.trns_efetuada.pop(len(Transação.trns_efetuada) - 2))
+        Transação.trns_efetuada_redo.append(Transação.trns_efetuada_undo.pop())
+        restaurar = Transação.trns_efetuada_undo[len(Transação.trns_efetuada_undo) - 1]
+        aux_func.restaurar(restaurar)
 
     elif transação[0] == 'Venda':
         venda = Venda.vendas[len(Venda.vendas) - 1]
@@ -629,10 +630,43 @@ def undo():
         taxa.ativo = False
 
     Transação.trns_redo.append(Transação.trns_undo.pop())
+    Transação.trns_ultima_redo.append(transação)
+    print('\nOperação desfeita com sucesso!')
 
 
 def redo():
-    pass
+    if len(Transação.trns_redo) == 0:
+        print('\nNenhuma operação para refazer!')
+        return
+
+    transação = Transação.trns_ultima_redo.pop()
+    aux_func = Empregado.localizar_empregado(transação[1])
+    if transação[0] == 'Adicionar':
+        aux_func.ativo = True
+
+    elif transação[0] == 'Remover':
+        aux_func.ativo = False
+
+    elif transação[0] == 'Editar':
+        restaurar = Transação.trns_efetuada_redo.pop()
+        aux_func.restaurar(restaurar)
+        Transação.trns_efetuada_undo.append(restaurar)
+
+    elif transação[0] == 'Venda':
+        venda = Venda.vendas[len(Venda.vendas) - 1]
+        venda.ativo = True
+
+    elif transação[0] == 'Ponto':
+        ponto = CartãoPonto.pontos[len(CartãoPonto.pontos) - 1]
+        ponto.ativo = True
+
+    elif transação[0] == 'Taxa':
+        taxa = TaxaDeServiço.taxas[len(TaxaDeServiço.taxas) - 1]
+        taxa.ativo = True
+    
+    Transação.trns_undo.append(Transação.trns_redo.pop())
+    Transação.trns_ultima_undo.append(transação)
+    print('\nOperação refeita com sucesso!')
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -644,7 +678,7 @@ while True:
     menu_principal()
     while True:
         opção = str(input())
-        if opção.isnumeric() and 0 < int(opção) < 11:
+        if opção.isnumeric() and 0 < int(opção) < 10:
             break
         else:
             print('\nOpção inválida!\n>> ', end='')
@@ -662,8 +696,3 @@ while True:
     elif opção == 9:
         print('\nAté logo!\n')
         exit()
-    elif opção == 10:
-        print(Transação.trns_efetuada)
-        print(Transação.trns_ultima, Transação.index_ultima)
-        print(Transação.trns_undo)
-        print(Transação.trns_redo)

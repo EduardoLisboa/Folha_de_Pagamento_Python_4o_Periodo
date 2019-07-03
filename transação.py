@@ -1,10 +1,10 @@
 class Transação():
 
-    index_efetuada = -1
-    index_ultima = -1
+    trns_efetuada_undo = []
+    trns_efetuada_redo = []
 
-    trns_efetuada = []
-    trns_ultima = []
+    trns_ultima_undo = []
+    trns_ultima_redo = []
 
     trns_undo = []
     trns_redo = []

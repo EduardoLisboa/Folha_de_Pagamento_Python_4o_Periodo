@@ -92,9 +92,10 @@ class Horario(Empregado):
         self.ativo, self.sindicato, self.taxa, self.id_sindicato,
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.valor_hora)
-        Transação.trns_efetuada.append(copia)
+        Transação.trns_efetuada_undo.append(copia)
         Transação.trns_undo.append(copia)
-        Transação.index_efetuada += 1
+        Transação.trns_redo.clear()
+        Transação.trns_ultima_redo.clear()
     
 
     def restaurar(self, other):
@@ -127,9 +128,10 @@ class Assalariado(Empregado):
         self.ativo, self.sindicato, self.taxa, self.id_sindicato,
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.salario)
-        Transação.trns_efetuada.append(copia)
+        Transação.trns_efetuada_undo.append(copia)
         Transação.trns_undo.append(copia)
-        Transação.index_efetuada += 1
+        Transação.trns_redo.clear()
+        Transação.trns_ultima_redo.clear()
 
 
     def restaurar(self, other):
@@ -163,9 +165,10 @@ class Comissionado(Empregado):
         self.ativo, self.sindicato, self.taxa, self.id_sindicato,
         self.ultimo_pagamento, self.proximo_pagamento,
         self.p_pagamento, self.salario, self.comissao)
-        Transação.trns_efetuada.append(copia)
+        Transação.trns_efetuada_undo.append(copia)
         Transação.trns_undo.append(copia)
-        Transação.index_efetuada += 1
+        Transação.trns_redo.clear()
+        Transação.trns_ultima_redo.clear()
 
     
     def restaurar(self, other):
