@@ -28,6 +28,5 @@ class TaxaDeServiço():
                     print(f'Nome: {Empregado.empregados[taxa.id_empregado - 1].nome}')
                     print(f'ID: {taxa.id_empregado}')
                     print(f'Mês da taxa: {meses[taxa.mes]}')
-                else: continuar = False
         else: print('\nNão há taxas de serviço cadastradas!')
         if not continuar: print('\nNão há taxas de serviço cadastradas!')

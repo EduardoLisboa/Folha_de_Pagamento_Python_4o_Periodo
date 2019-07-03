@@ -23,6 +23,5 @@ class Venda():
                     print(f'Nome: {Empregado.empregados[venda.id_empregado - 1].nome}')
                     print(f'Valor da venda: R${venda.valor:.2f}')
                     print(f'Data da venda: {venda.data}')
-                else: continuar = False
         else: print('\nNão há vendas cadastradas!')
         if not continuar: print('\nNão há vendas cadastradas!')

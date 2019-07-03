@@ -21,12 +21,12 @@ class CartãoPonto():
             for ponto in CartãoPonto.pontos:
                 if ponto.ativo:
                     continuar = True
-                    print(f'\nNome: {Empregado.empregados[ponto.id_empregado - 1].nome}')
+                    aux_func = Empregado.localizar_empregado(ponto.id_empregado)
+                    print(f'\nNome: {aux_func.nome}')
                     print(f'ID: {ponto.id_empregado}')
                     print(f'Data: {ponto.data}')
                     print(f'Entrada: {ponto.entrada}')
                     print('Funcionário ainda em serviço' if not ponto.entrando else f'Saída: {ponto.saída}')
-                else: continuar = False
         else: print('\nNão há pontos lançados!')
         if not continuar: print('\nNão há pontos lançados!')
 

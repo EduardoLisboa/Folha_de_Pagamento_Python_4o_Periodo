@@ -393,14 +393,16 @@ def lançar_cartão_ponto(opc):
         ponto.id_empregado = aux_func.id_empregado
         ponto.ativo = True
 
-        for ponto in CartãoPonto.pontos:
-            if aux_func.id_empregado == ponto.id_empregado and data_ponto == ponto.data:
+        for pt in CartãoPonto.pontos:
+            if aux_func.id_empregado == pt.id_empregado and data_ponto == pt.data:
                 print('Empregado já bateu ponto hoje!')
                 return
 
         CartãoPonto.pontos.append(ponto)
         Transação.trns_undo.append(ponto)
         Transação.trns_ultima_undo.append(['Ponto', ponto.id_empregado])
+        Transação.trns_redo.clear()
+        Transação.trns_ultima_redo.clear()
         print('Ponto de entrada OK!\n')
 
     elif opc == 2:
@@ -464,6 +466,8 @@ def lançar_venda():
     Venda.vendas.append(venda)
     Transação.trns_ultima_undo.append(['Venda', venda.id_empregado])
     Transação.trns_undo.append(venda)
+    Transação.trns_redo.clear()
+    Transação.trns_ultima_redo.clear()
     print('\nVenda registrada com sucesso!')
 
 
@@ -478,6 +482,45 @@ def func_vendas():
 
         if opção == 1: lançar_venda()
         elif opção == 2: Venda.mostrar_vendas()
+        elif opção == 3: return
+
+
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""                         TAXAS DE SERVIÇO                         """
+""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+
+def lançar_taxa_serviço():
+    taxa = TaxaDeServiço()
+    taxa.valor = float(input('Valor da taxa: R$'))
+    print('Funcionário associado à taxa:')
+    aux_func = Empregado.localizar_empregado()
+    if not aux_func: print('\nNão há empregados com esse ID!'); return
+    print('\nFuncionário localizado!')
+    print(f'\nNome: {aux_func.nome}')
+    taxa.id_empregado = aux_func.id_empregado
+    taxa.mes = date.today().month
+    taxa.ativo = True
+
+    TaxaDeServiço.taxas.append(taxa)
+    Transação.trns_undo.append(taxa)
+    Transação.trns_ultima_undo.append(['Taxa', taxa.id_empregado])
+    Transação.trns_redo.clear()
+    Transação.trns_ultima_redo.clear()
+    print('Taxa associada com sucesso!')
+
+
+def func_taxas_serviço():
+    while True:
+        menu_taxas_serviço()
+        while True:
+            opção = str(input())
+            if opção.isnumeric() and 0 < int(opção) < 4: break
+            else: print('\nOpção inválida!\n')
+        opção = int(opção)
+
+        if opção == 1: lançar_taxa_serviço()
+        elif opção == 2: TaxaDeServiço.mostrar_taxas_serviço()
         elif opção == 3: return
 
 
@@ -539,43 +582,6 @@ def rodar_folha():
 
 
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-"""                         TAXAS DE SERVIÇO                         """
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-
-
-def lançar_taxa_serviço():
-    taxa = TaxaDeServiço()
-    taxa.valor = float(input('Valor da taxa: R$'))
-    print('Funcionário associado à taxa:')
-    aux_func = Empregado.localizar_empregado()
-    if not aux_func: print('\nNão há empregados com esse ID!'); return
-    print('\nFuncionário localizado!')
-    print(f'\nNome: {aux_func.nome}')
-    taxa.id_empregado = aux_func.id_empregado
-    taxa.mes = date.today().month
-    taxa.ativo = True
-
-    TaxaDeServiço.taxas.append(taxa)
-    Transação.trns_undo.append(taxa)
-    Transação.trns_ultima_undo.append(['Taxa', taxa.id_empregado])
-    print('Taxa associada com sucesso!')
-
-
-def func_taxas_serviço():
-    while True:
-        menu_taxas_serviço()
-        while True:
-            opção = str(input())
-            if opção.isnumeric() and 0 < int(opção) < 4: break
-            else: print('\nOpção inválida!\n')
-        opção = int(opção)
-
-        if opção == 1: lançar_taxa_serviço()
-        elif opção == 2: TaxaDeServiço.mostrar_taxas_serviço()
-        elif opção == 3: return
-
-
-""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 """                       AGENDAS DE PAGAMENTO                       """
 """"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
@@ -613,21 +619,31 @@ def undo():
         aux_func.ativo = True
 
     elif transação[0] == 'Editar':
-        Transação.trns_efetuada_redo.append(Transação.trns_efetuada_undo.pop())
-        restaurar = Transação.trns_efetuada_undo[len(Transação.trns_efetuada_undo) - 1]
+        trns = Transação.trns_efetuada_undo.pop()
+        Transação.trns_efetuada_redo.append(trns)
+        for indice in range(len(Transação.trns_efetuada_undo) - 1, -1, -1):
+            if Transação.trns_efetuada_undo[indice].id_empregado == trns.id_empregado:
+                restaurar = Transação.trns_efetuada_undo[indice]
+                break
         aux_func.restaurar(restaurar)
 
     elif transação[0] == 'Venda':
-        venda = Venda.vendas[len(Venda.vendas) - 1]
-        venda.ativo = False
+        for indice in range(len(Venda.vendas) - 1, -1, -1):
+            if Venda.vendas[indice].id_empregado == transação[1]:
+                Venda.vendas[indice].ativo = False
+                break
 
     elif transação[0] == 'Ponto':
-        ponto = CartãoPonto.pontos[len(CartãoPonto.pontos) - 1]
-        ponto.ativo = False
+        for indice in range(len(CartãoPonto.pontos) - 1, -1, -1):
+            if CartãoPonto.pontos[indice].id_empregado == transação[1]:
+                CartãoPonto.pontos[indice].ativo = False
+                break
 
     elif transação[0] == 'Taxa':
-        taxa = TaxaDeServiço.taxas[len(TaxaDeServiço.taxas) - 1]
-        taxa.ativo = False
+        for indice in range(len(TaxaDeServiço.taxas) - 1, -1, -1):
+            if TaxaDeServiço.taxas[indice].id_empregado == transação[1]:
+                TaxaDeServiço.taxas[indice].ativo = False
+                break
 
     Transação.trns_redo.append(Transação.trns_undo.pop())
     Transação.trns_ultima_redo.append(transação)
@@ -653,16 +669,22 @@ def redo():
         Transação.trns_efetuada_undo.append(restaurar)
 
     elif transação[0] == 'Venda':
-        venda = Venda.vendas[len(Venda.vendas) - 1]
-        venda.ativo = True
+        for indice in range(len(Venda.vendas) - 1, -1, -1):
+            if Venda.vendas[indice].id_empregado == transação[1]:
+                Venda.vendas[indice].ativo = True
+                break
 
     elif transação[0] == 'Ponto':
-        ponto = CartãoPonto.pontos[len(CartãoPonto.pontos) - 1]
-        ponto.ativo = True
+        for indice in range(len(CartãoPonto.pontos) - 1, -1, -1):
+            if CartãoPonto.pontos[indice].id_empregado == transação[1]:
+                CartãoPonto.pontos[indice].ativo = True
+                break
 
     elif transação[0] == 'Taxa':
-        taxa = TaxaDeServiço.taxas[len(TaxaDeServiço.taxas) - 1]
-        taxa.ativo = True
+        for indice in range(len(TaxaDeServiço.taxas) - 1, -1, -1):
+            if TaxaDeServiço.taxas[indice].id_empregado == transação[1]:
+                TaxaDeServiço.taxas[indice].ativo = True
+                break
     
     Transação.trns_undo.append(Transação.trns_redo.pop())
     Transação.trns_ultima_undo.append(transação)
