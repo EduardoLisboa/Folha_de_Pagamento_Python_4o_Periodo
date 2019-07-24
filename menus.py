@@ -1,4 +1,7 @@
+from os import system
+
 def menu_principal():
+    system('clear')
     print("""\n-=-=- MENU PRINCIPAL -=-=-
 1 - Funcionários
 2 - Rodar Folha de Pagamentos
@@ -13,6 +16,7 @@ def menu_principal():
 
 
 def menu_empregado():
+    system('clear')
     print("""\n-=-=- FUNCIONÁRIOS -=-=-
 1 - Adicionar funcionário
 2 - Remover funcionário
@@ -23,6 +27,7 @@ def menu_empregado():
 
 
 def menu_cartão_ponto():
+    system('clear')
     print("""\n-=-=- CARTÃO PONTO -=-=-
 1 - Entrada
 2 - Saída
@@ -32,6 +37,7 @@ def menu_cartão_ponto():
 
 
 def menu_vendas():
+    system('clear')
     print("""\n-=-=- VENDAS -=-=-
 1 - Registrar venda
 2 - Mostrar vendas efetuadas
@@ -40,6 +46,7 @@ def menu_vendas():
 
 
 def menu_taxas_serviço():
+    system('clear')
     print("""\n -=-=- TAXAS DE SERVIÇO -=-=-
 1 - Lançar Taxa de Serviço
 2 - Exibir Taxas

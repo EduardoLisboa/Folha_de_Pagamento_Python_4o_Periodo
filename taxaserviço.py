@@ -30,3 +30,4 @@ class TaxaDeServiço():
                     print(f'Mês da taxa: {meses[taxa.mes]}')
         else: print('\nNão há taxas de serviço cadastradas!')
         if not continuar: print('\nNão há taxas de serviço cadastradas!')
+        input()

@@ -25,3 +25,4 @@ class Venda():
                     print(f'Data da venda: {venda.data}')
         else: print('\nNão há vendas cadastradas!')
         if not continuar: print('\nNão há vendas cadastradas!')
+        input()

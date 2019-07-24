@@ -1,5 +1,6 @@
-from datetime import timedelta
 from transação import Transação
+from entrada import func_entrada
+from datetime import timedelta
 
 class Empregado():
     id_empregado = 0
@@ -34,11 +35,7 @@ class Empregado():
     @staticmethod
     def localizar_empregado(id_emp = -1):
         if id_emp == -1:
-            while True:
-                id_func = str(input('Insira o ID do funcionário: '))
-                if id_func.isnumeric(): break
-                else: print('\nID inválido!')
-            id_func = int(id_func)
+            id_func = func_entrada(int, 'Insira o ID do funcionário: ')
             for empregado in Empregado.empregados:
                 if id_func == empregado.id_empregado:
                     return empregado
@@ -76,6 +73,7 @@ class Empregado():
                     print(f'Próximo pagamento: {emp.proximo_pagamento}')
         else:
             print('\nNão há funcionários cadastrados!')
+        input()
 
 
 class Horario(Empregado):

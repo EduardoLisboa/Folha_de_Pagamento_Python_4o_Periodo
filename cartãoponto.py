@@ -29,6 +29,7 @@ class CartãoPonto():
                     print('Funcionário ainda em serviço' if not ponto.entrando else f'Saída: {ponto.saída}')
         else: print('\nNão há pontos lançados!')
         if not continuar: print('\nNão há pontos lançados!')
+        input()
 
 
     @staticmethod
